@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2a2118">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Seoul 秋遊記">
+<title>Seoul 秋遊記</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#2a2118;--surface:#352a1e;--surface-2:#3f3223;--line:rgba(240,225,200,.10);
+    --text:#f3ebdd;--muted:#b7a888;--gold:#e0b354;--gold-dim:#caa04a;
+    --terra:#cf7440;--terra-soft:rgba(207,116,64,.16);--green:#03C75A;--blue:#5a94f0;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:#1d160f;color:var(--text);
+    font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .app{max-width:440px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:78px;overflow:hidden;}
+
+  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;background:rgba(42,33,24,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .topbar .brand{font-family:"Fraunces",serif;font-weight:600;font-size:1.15rem;letter-spacing:.01em;}
+  .topbar .brand small{font-family:"Noto Sans TC";font-weight:400;color:var(--muted);font-size:.72rem;margin-left:6px;}
+  .topbar .gear{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:var(--surface);font-size:1rem;border:1px solid var(--line);}
+
+  .screen{display:none;padding:18px 18px 8px;animation:fade .25s ease;}
+  .screen.on{display:block;}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+
+  .hero{padding:26px 4px 20px;}
+  .hero .eyebrow{color:var(--gold);font-size:.82rem;font-weight:500;letter-spacing:.04em;margin:0 0 8px;}
+  .hero h1{font-family:"Fraunces",serif;font-weight:500;font-size:4.6rem;line-height:.88;margin:0;letter-spacing:-.02em;}
+  .hero .cn{font-size:1.15rem;color:var(--muted);margin:10px 0 0;letter-spacing:.14em;}
+  .hero .who{color:var(--muted);font-size:.9rem;margin:14px 0 0;}
+
+  .dayswitch{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);
+    border:1px solid var(--line);border-radius:16px;padding:14px 12px;margin:6px 0 18px;}
+  .dayswitch button{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);
+    color:var(--text);font-size:1.2rem;cursor:pointer;flex:0 0 auto;transition:background .15s;}
+  .dayswitch button:hover{background:#4a3a27;}
+  .dayswitch button:disabled{opacity:.32;cursor:default;}
+  .dayswitch .dcenter{text-align:center;flex:1;}
+  .dayswitch .ddate{font-family:"Fraunces",serif;font-size:1.5rem;font-weight:500;}
+  .dayswitch .dcount{color:var(--gold);font-size:.78rem;font-weight:500;margin-top:2px;}
+
+  .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+  .quick a{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:14px;font-weight:500;font-size:.92rem;}
+  .quick a .qi{font-size:1.15rem;}
+  .quick a .arr{margin-left:auto;color:var(--muted);}
+
+  .sectlabel{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.86rem;font-weight:500;margin:4px 2px 12px;}
+  .sectlabel::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  .entry{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:14px;margin-bottom:10px;
+    background:var(--surface);border:1px solid var(--line);border-radius:16px;}
+  .entry .ico{width:44px;height:44px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;font-size:1.3rem;}
+  .entry .etop{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+  .entry .etime{color:var(--gold);font-weight:700;font-size:.82rem;font-variant-numeric:tabular-nums;}
+  .entry .etitle{font-weight:500;font-size:1.02rem;}
+  .entry .eplace{color:var(--muted);font-size:.85rem;margin-top:3px;}
+  .entry .enote{font-size:.86rem;margin-top:7px;color:#e8ddc9;line-height:1.5;}
+  .entry .flighttag{display:inline-block;font-size:.75rem;font-weight:500;color:var(--muted);
+    border:1px solid var(--line);border-radius:6px;padding:2px 8px;margin-top:8px;}
+  .entry.todo{background:var(--terra-soft);border-color:rgba(207,116,64,.4);}
+  .entry.todo .ico{background:rgba(207,116,64,.25);}
+  .entry.soft{background:rgba(224,179,84,.10);border-color:rgba(224,179,84,.35);}
+  .etag{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:6px;margin-top:8px;}
+  .etag.t{background:var(--terra);color:#241109;}
+  .etag.s{background:var(--gold);color:#241a09;}
+  .etag.k{background:transparent;border:1px solid var(--gold-dim);color:var(--gold);}
+  .etag.tent{background:transparent;border:1px dashed var(--muted);color:var(--muted);}
+
+  .maps{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap;}
+  .maps a{display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:500;padding:7px 12px;
+    border-radius:9px;border:1px solid var(--line);background:var(--surface-2);}
+  .maps a:hover{border-color:var(--gold-dim);}
+  .maps a .dot{width:8px;height:8px;border-radius:50%;}
+  .maps a .dot.n{background:var(--green);}
+  .maps a .dot.g{background:var(--blue);}
+
+  .daygroup{margin-bottom:6px;}
+  .dayhead{font-family:"Fraunces",serif;font-size:1.5rem;font-weight:500;margin:20px 2px 4px;}
+  .daysub{color:var(--gold);font-size:.8rem;font-weight:500;margin:0 2px 14px;}
+
+  .region{font-family:"Fraunces",serif;font-size:1.3rem;margin:6px 2px 14px;}
+  .place{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:14px;margin-bottom:10px;
+    background:var(--surface);border:1px solid var(--line);border-radius:16px;}
+  .place .ico{width:44px;height:44px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;font-size:1.3rem;}
+  .place .pname{font-weight:500;font-size:1rem;}
+  .place .paddr{color:var(--muted);font-size:.82rem;margin-top:2px;}
+
+  .mapframe{width:100%;height:340px;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:14px;}
+  .mapframe iframe{width:100%;height:100%;border:0;filter:saturate(.9);}
+  .maphint{color:var(--muted);font-size:.85rem;margin:0 2px 16px;line-height:1.55;}
+
+  .fcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;}
+  .fcard .fleg{color:var(--gold);font-size:.78rem;font-weight:700;margin-bottom:8px;}
+  .fcard .fno{font-weight:700;font-size:1.02rem;}
+  .fcard .froute{display:flex;align-items:center;gap:12px;margin-top:10px;}
+  .fcard .froute .ap{text-align:center;}
+  .fcard .froute .code{font-family:"Fraunces",serif;font-size:1.35rem;font-weight:500;}
+  .fcard .froute .apt{color:var(--muted);font-size:.72rem;}
+  .fcard .froute .time{font-size:.82rem;margin-top:2px;font-variant-numeric:tabular-nums;}
+  .fcard .froute .line{flex:1;height:1px;background:var(--line);position:relative;}
+  .fcard .froute .line::after{content:"✈";position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:.8rem;color:var(--muted);}
+  .fcard .fmeta{color:var(--muted);font-size:.82rem;margin-top:10px;}
+  .fwho{display:inline-block;font-size:.72rem;font-weight:700;color:var(--gold);border:1px solid var(--gold-dim);border-radius:6px;padding:1px 8px;margin-bottom:10px;}
+
+  .backbtn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.9rem;background:none;border:none;cursor:pointer;padding:4px 0;margin-bottom:10px;}
+  .screentitle{font-family:"Fraunces",serif;font-size:1.7rem;font-weight:500;margin:2px 2px 18px;}
+
+  .botnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;display:flex;
+    background:rgba(42,33,24,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:40;}
+  .botnav button{flex:1;background:none;border:none;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;
+    align-items:center;gap:3px;font-family:inherit;font-size:.68rem;padding:6px 0;}
+  .botnav button .ni{font-size:1.25rem;}
+  .botnav button.active{color:var(--gold);}
+  a.gearsheet:focus-visible,.botnav button:focus-visible,.dayswitch button:focus-visible,.maps a:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}.screen{animation:none;}*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">Seoul <small>秋遊記</small></div>
+    <a class="gear gearsheet" href="https://docs.google.com/spreadsheets/d/11lmzUJsgKlDrrU43LfV0WyjI5dLAeQl6x4Bf2zEO31o/edit" target="_blank" rel="noopener" aria-label="Open planning sheet">⚙️</a>
+  </div>
+
+  <!-- HOME -->
+  <section class="screen on" id="s-home">
+    <div class="hero">
+      <p class="eyebrow">Korea · 2026 秋</p>
+      <h1>Seoul</h1>
+      <p class="cn">首爾 · 九月末</p>
+      <p class="who">Joni &amp; Kathy · Travelodge Myeongdong Euljiro</p>
+    </div>
+    <div class="dayswitch">
+      <button id="prevDay" aria-label="Previous day">‹</button>
+      <div class="dcenter">
+        <div class="ddate" id="dDate">Tue · 9/29</div>
+        <div class="dcount" id="dCount">Day 1 / 6</div>
+      </div>
+      <button id="nextDay" aria-label="Next day">›</button>
+    </div>
+    <div class="quick">
+      <a href="#" onclick="go('flights');return false;"><span class="qi">✈️</span>航班時刻<span class="arr">›</span></a>
+      <a href="#" onclick="go('map');return false;"><span class="qi">🗺️</span>地圖<span class="arr">›</span></a>
+    </div>
+    <div class="sectlabel">📅 今日行程 Today</div>
+    <div id="todayList"></div>
+  </section>
+
+  <!-- ITINERARY -->
+  <section class="screen" id="s-itin">
+    <div class="screentitle">📅 完整行程</div>
+    <div id="itinList"></div>
+  </section>
+
+  <!-- PLACES -->
+  <section class="screen" id="s-places">
+    <div class="screentitle">🏛️ 景點 Places</div>
+    <div class="region">首爾 · Seoul</div>
+    <div id="placeList"></div>
+  </section>
+
+  <!-- MAP -->
+  <section class="screen" id="s-map">
+    <div class="screentitle">🗺️ 地圖 Map</div>
+    <div class="mapframe">
+      <iframe src="https://maps.google.com/maps?q=Travelodge%20Myeongdong%20Euljiro%20Seoul&z=12&output=embed" title="Seoul map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <p class="maphint">Centered on your Myeongdong base. In Korea, Naver Maps gives working transit &amp; walking directions where Google is limited — use the Naver button on each place below.</p>
+    <div id="mapPlaceList"></div>
+  </section>
+
+  <!-- FLIGHTS -->
+  <section class="screen" id="s-flights">
+    <button class="backbtn" onclick="go('home')">‹ 返回</button>
+    <div class="screentitle">✈️ 航班 · 住宿</div>
+
+    <div class="fcard">
+      <span class="fwho">Joni</span>
+      <div class="fleg">去程 OUTBOUND · 9/29 Tue</div>
+      <div class="fno">BR 156 · EVA Air</div>
+      <div class="froute">
+        <div class="ap"><div class="code">TSA</div><div class="apt">松山</div><div class="time">14:40</div></div>
+        <div class="line"></div>
+        <div class="ap"><div class="code">GMP</div><div class="apt">金浦</div><div class="time">18:10</div></div>
+      </div>
+      <div class="fmeta">回程 10/4: CI 261 · China Airlines · GMP 13:55 (T1) → TSA 15:35 (T1). Be at Gimpo by ~12:00 PM.</div>
+    </div>
+
+    <div class="fcard">
+      <span class="fwho">Kathy</span>
+      <div class="fleg">去程 OUTBOUND · 9/29 Tue</div>
+      <div class="fno">BR 146 · EVA Air</div>
+      <div class="froute">
+        <div class="ap"><div class="code">TPE</div><div class="apt">台北</div><div class="time"></div></div>
+        <div class="line"></div>
+        <div class="ap"><div class="code">ICN</div><div class="apt">仁川</div><div class="time">10:45</div></div>
+      </div>
+      <div class="fmeta">回程 10/4: BR 171 · EVA Air · ICN 20:45 → KHH 高雄. Note: Kathy uses Incheon (ICN), Joni uses Gimpo (GMP).</div>
+    </div>
+
+    <div class="fcard">
+      <div class="fleg">住宿 HOTEL</div>
+      <div class="fno">Travelodge Myeongdong Euljiro</div>
+      <div class="fmeta">61 Supyo-ro, Jung-gu · Check-in 9/29 → Check-out 10/4<br>Note: 9/30 night is the temple stay at Geumseonsa (not the hotel).</div>
+      <div class="maps">
+        <a href="https://map.naver.com/p/search/트래블로지 명동 을지로" target="_blank" rel="noopener"><span class="dot n"></span>Naver</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=Travelodge%20Myeongdong%20Euljiro&query_place_id=ChIJj1trLOSifDURv4z-TXYIkp8" target="_blank" rel="noopener"><span class="dot g"></span>Google</a>
+      </div>
+    </div>
+  </section>
+
+  <nav class="botnav">
+    <button data-nav="home" class="active" onclick="go('home')"><span class="ni">🏠</span>首頁</button>
+    <button data-nav="itin" onclick="go('itin')"><span class="ni">📅</span>行程</button>
+    <button data-nav="places" onclick="go('places')"><span class="ni">🏛️</span>景點</button>
+    <button data-nav="map" onclick="go('map')"><span class="ni">🗺️</span>地圖</button>
+  </nav>
+</div>
+
+<script>
+  var M = {
+    travelodge:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/트래블로지 명동 을지로'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Travelodge%20Myeongdong%20Euljiro&query_place_id=ChIJj1trLOSifDURv4z-TXYIkp8'}],
+    osteria:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/오스테리아 샘킴'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Osteria%20Sam%20Kim&query_place_id=ChIJi68n1CmZfDURW2Aw5tEaclM'}],
+    haye:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/하예스킨의원'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=HAYE%20skin%20clinic&query_place_id=ChIJEfS6XrqjfDUR5TaI2orPB18'}],
+    geumseonsa:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/금선사'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Samgaksan%20Geumseonsa%20Temple&query_place_id=ChIJbYbZF-CXfDUR1XNtfCJgmPA'}],
+    bagetti:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/바게티'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Bagetti%20Yongsan&query_place_id=ChIJn3KJRgCjfDURNKmkSHQ4X_Q'}],
+    hanyakbang:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/커피한약방'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Coffee%20Hanyakbang&query_place_id=ChIJedlDzuWifDURBaOCaa5hkL4'}],
+    localstitch:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/로컬스티치 회현'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Local%20Stitch%20Hoehyeon&query_place_id=ChIJrbVepU-jfDURgGjbzpejigQ'}],
+    euljiro3:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/을지로3가 맛집'}],
+    woolaeok:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/우래옥'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Woo%20Lae%20Oak%20Seoul'}],
+    hannam:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/한남동'}]
+  };
+
+  var DAYS = [
+    {date:'Tue · 9/29', sub:'週二 · 抵達 Arrival', entries:[
+      {ico:'🧳',time:'10:45 AM',title:'Kathy arrives — Incheon (ICN)',type:'k',tag:{t:'k',x:'Kathy'},flight:'BR 146 · EVA Air',note:'Drop luggage at Travelodge, then shopping in Myeongdong.'},
+      {ico:'✈️',time:'2:40 PM',title:'Depart Taipei (TSA)',place:'松山 → 金浦 (GMP)',flight:'BR 156 · EVA Air'},
+      {ico:'🛬',time:'6:10 PM',title:'Arrive Seoul — Gimpo (GMP)',place:'Local time, GMT+9'},
+      {ico:'🏨',time:'晚上',title:'Check in — Travelodge',place:'61 Supyo-ro, Jung-gu',note:'Front desk opens 3 PM; with the transfer you\u2019ll arrive ~7:15 PM.',maps:M.travelodge},
+      {ico:'🍜',title:'Dinner — Euljiro 3 (을지로3가)',note:'Eat around the Euljiro 3-ga alleys.',maps:M.euljiro3}
+    ]},
+    {date:'Wed · 9/30', sub:'週三 · 寺廟寄宿 Temple stay', entries:[
+      {ico:'🥪',time:'10:00 AM',title:'Brunch — Bagetti (바게티)',place:'55 Hangang-daero 40-gil, Yongsan',note:'Sinyongsan Stn (Line 4), Exit 1. Sandwich &amp; bakery café.',maps:M.bagetti},
+      {ico:'🚪',time:'2:00 PM',title:'Check out — Travelodge',note:'Head to the temple after checkout.',maps:M.travelodge},
+      {ico:'🛕',time:'3:00 PM',title:'Temple stay — Geumseonsa (금선사)',place:'137 Bibong-gil, Jongno-gu',type:'todo',tag:{t:'t',x:'待確認 confirm'},note:'Overnight stay, English program. Getting there: Line 3 to Bulgwang Stn Exit 2, then bus 7212, then a short uphill walk — ~45 min from Myeongdong (or ~30 min taxi). Covers the 9/30 night; confirm check-in &amp; next-day release.',maps:M.geumseonsa}
+    ]},
+    {date:'Thu · 10/1', sub:'週四', entries:[
+      {ico:'🛕',time:'10:30 AM',title:'Return from temple stay',place:'Geumseonsa',note:'Check the release time works against the 12:30 lunch.'},
+      {ico:'🍝',time:'12:30 PM',title:'Lunch — Osteria Sam Kim',place:'55 Yanghwa-ro 3-gil, Mapo-gu · near Hapjeong',type:'k',tag:{t:'k',x:'Kathy · booked'},note:'Small (~26 seats) — reserved. ~20–25 min taxi back to hotel. Closed Sundays.',maps:M.osteria},
+      {ico:'🏨',time:'3:00 PM',title:'Check in — Travelodge',place:'Back at base, Myeongdong',maps:M.travelodge},
+      {ico:'🛍️',title:'Local Stitch Hoehyeon',place:'Hoehyeon Station',note:'Lighting &amp; design select-shop and indie bookstore complex.',maps:M.localstitch},
+      {ico:'🍜',title:'Dinner — Woo Lae Oak (우래옥)',type:'tent',tag:{t:'tent',x:'or / TBD'},note:'冷麵 — legendary Pyongyang cold noodles in Euljiro. To confirm.',maps:M.woolaeok}
+    ]},
+    {date:'Fri · 10/2', sub:'週五', entries:[
+      {ico:'☕',time:'10:00 AM',title:'Coffee Hanyakbang (커피한약방)',place:'16-6 Samil-daero 12-gil, Euljiro',note:'Hidden-alley café in a former herbal-medicine shop.',maps:M.hanyakbang},
+      {ico:'🚶',title:'Hannam-dong (한남동)',note:'Wander the neighbourhood — boutiques &amp; cafés.',maps:M.hannam},
+      {ico:'💆',time:'4:00 PM',title:'HAYE skin clinic',place:'Dokseodang-ro 80, Yongsan-gu · near Hannam',note:'Leave hotel ~3:20–3:30 PM (15–20 min taxi). Confirm via KakaoTalk — English is limited; bring requests in Korean.',maps:M.haye},
+      {ico:'🍜',title:'Dinner — 麵首爾 (noodles)',type:'tent',tag:{t:'tent',x:'or / TBD'},note:'Kathy — to decide.'}
+    ]},
+    {date:'Sat · 10/3', sub:'週六', entries:[
+      {ico:'🎈',title:'Free day in Seoul',type:'soft',tag:{t:'s',x:'Open'},note:'Based in Myeongdong — plan together.'}
+    ]},
+    {date:'Sun · 10/4', sub:'週日 · 返程 Departure', entries:[
+      {ico:'🚪',time:'11:00 AM',title:'Check out — Travelodge',maps:M.travelodge},
+      {ico:'✈️',time:'1:55 PM',title:'Depart Seoul — Gimpo (GMP)',place:'Terminal 1 · airport by ~12:00 PM',flight:'CI 261 · China Airlines'},
+      {ico:'🛬',time:'3:35 PM',title:'Arrive Taipei (TSA)',place:'Terminal 1'},
+      {ico:'🧳',time:'8:45 PM',title:'Kathy departure — Incheon (ICN)',place:'Terminal 1 → Kaohsiung (KHH)',type:'k',tag:{t:'k',x:'Kathy'},flight:'BR 171 · EVA Air'}
+    ]}
+  ];
+
+  var PLACES = [
+    {ico:'🏨',name:'Travelodge Myeongdong Euljiro',addr:'61 Supyo-ro, Jung-gu · your base',maps:M.travelodge},
+    {ico:'🛕',name:'Geumseonsa (금선사)',addr:'Jongno-gu · temple stay 9/30',maps:M.geumseonsa},
+    {ico:'🥪',name:'Bagetti (바게티)',addr:'Yongsan · brunch 9/30',maps:M.bagetti},
+    {ico:'🍝',name:'Osteria Sam Kim',addr:'Mapo-gu near Hapjeong · lunch 10/1',maps:M.osteria},
+    {ico:'🛍️',name:'Local Stitch Hoehyeon',addr:'Hoehyeon Stn · shop 10/1',maps:M.localstitch},
+    {ico:'🍜',name:'Woo Lae Oak (우래옥)',addr:'Euljiro · cold noodles · tentative',maps:M.woolaeok},
+    {ico:'☕',name:'Coffee Hanyakbang (커피한약방)',addr:'Euljiro alley café · 10/2',maps:M.hanyakbang},
+    {ico:'💆',name:'HAYE skin clinic',addr:'Yongsan near Hannam · 10/2 4 PM',maps:M.haye}
+  ];
+
+  function mapsHTML(maps){
+    if(!maps) return '';
+    return '<div class="maps">'+maps.map(function(m){
+      return '<a href="'+m.url+'" target="_blank" rel="noopener" aria-label="Open in '+m.label+'"><span class="dot '+m.cls+'"></span>'+m.label+'</a>';
+    }).join('')+'</div>';
+  }
+  function entryHTML(e){
+    var cls='entry'+(e.type?(' '+(e.type==='k'?'':e.type)):'');
+    var top='<div class="etop">'+(e.time?'<span class="etime">'+e.time+'</span>':'')+'<span class="etitle">'+e.title+'</span></div>';
+    var place=e.place?'<div class="eplace">'+e.place+'</div>':'';
+    var note=e.note?'<div class="enote">'+e.note+'</div>':'';
+    var flight=e.flight?'<span class="flighttag">'+e.flight+'</span>':'';
+    var tag=e.tag?'<span class="etag '+e.tag.t+'">'+e.tag.x+'</span>':'';
+    return '<div class="'+cls+'"><div class="ico">'+e.ico+'</div><div class="body">'+top+place+note+flight+tag+mapsHTML(e.maps)+'</div></div>';
+  }
+  function placeHTML(p){
+    return '<div class="place"><div class="ico">'+p.ico+'</div><div><div class="pname">'+p.name+'</div><div class="paddr">'+p.addr+'</div>'+mapsHTML(p.maps)+'</div></div>';
+  }
+
+  var cur=0;
+  function renderToday(){
+    var d=DAYS[cur];
+    document.getElementById('dDate').textContent=d.date;
+    document.getElementById('dCount').textContent='Day '+(cur+1)+' / '+DAYS.length;
+    document.getElementById('todayList').innerHTML=d.entries.map(entryHTML).join('');
+    document.getElementById('prevDay').disabled=(cur===0);
+    document.getElementById('nextDay').disabled=(cur===DAYS.length-1);
+  }
+  document.getElementById('prevDay').onclick=function(){if(cur>0){cur--;renderToday();}};
+  document.getElementById('nextDay').onclick=function(){if(cur<DAYS.length-1){cur++;renderToday();}};
+
+  document.getElementById('itinList').innerHTML=DAYS.map(function(d){
+    return '<div class="daygroup"><div class="dayhead">'+d.date+'</div><div class="daysub">'+d.sub+'</div>'+
+      d.entries.map(entryHTML).join('')+'</div>';
+  }).join('');
+  document.getElementById('placeList').innerHTML=PLACES.map(placeHTML).join('');
+  document.getElementById('mapPlaceList').innerHTML=PLACES.map(placeHTML).join('');
+
+  function go(name){
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+    document.getElementById('s-'+name).classList.add('on');
+    var navName=(name==='flights')?'home':name;
+    document.querySelectorAll('.botnav button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-nav')===navName);
+    });
+    window.scrollTo(0,0);
+  }
+  window.go=go;
+  renderToday();
+</script>
+</body>
+</html>
