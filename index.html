@@ -223,11 +223,33 @@
     </div>
   </section>
 
+  <!-- SEONGSU -->
+  <section class="screen" id="s-seongsu">
+    <div class="screentitle">🛍️ 購物路線</div>
+
+    <div class="region">聖水洞 · Seongsu 香氛散策</div>
+    <p class="maphint">Perfume &amp; beauty route — 22 stops, a walkable loop from Seongsu Station Exit 4 (Line 2). Ideal for the 10/3 free-day afternoon. In Korea, use the Naver button.</p>
+    <div class="mapframe">
+      <iframe src="https://maps.google.com/maps?q=Seongsu%20Station%20Seoul&z=15&output=embed" title="Seongsu map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="sectlabel">推薦路線 · Seongsu Stn Exit 4 →</div>
+    <div id="seongsuList"></div>
+
+    <div class="region" style="margin-top:28px;">漢南洞 · Hannam 包包 & 香氛</div>
+    <p class="maphint">Korean bag brands clustered around Hangangjin / Itaewon-ro (한남동) — fits your 10/2 afternoon. Several close Mon–Tue; on Fri all open, but Christine Project closes 5 PM that day and Mucu takes a 2–3 PM break.</p>
+    <div class="mapframe">
+      <iframe src="https://maps.google.com/maps?q=Itaewon-ro%2054-gil%20Hannam%20Seoul&z=16&output=embed" title="Hannam map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="sectlabel">包包品牌 · Bag brands</div>
+    <div id="hannamList"></div>
+  </section>
+
   <nav class="botnav">
     <button data-nav="home" class="active" onclick="go('home')"><span class="ni">🏠</span>首頁</button>
     <button data-nav="itin" onclick="go('itin')"><span class="ni">📅</span>行程</button>
     <button data-nav="places" onclick="go('places')"><span class="ni">🏛️</span>景點</button>
     <button data-nav="map" onclick="go('map')"><span class="ni">🗺️</span>地圖</button>
+    <button data-nav="seongsu" onclick="go('seongsu')"><span class="ni">🛍️</span>購物</button>
   </nav>
 </div>
 
@@ -260,7 +282,22 @@
       {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/우래옥'},
       {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Woo%20Lae%20Oak%20Seoul'}],
     hannam:[
-      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/한남동'}]
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/한남동'}],
+    pildong:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/필동면옥'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Pildong%20Myeonok&query_place_id=ChIJzctx3J2jfDUR8aZ4DVRySoE'}],
+    geobuki:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/거북이삼겹살 중곡'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=%EA%B1%B0%EB%B6%81%EC%9D%B4%EC%82%BC%EA%B2%B9%EC%82%B4&query_place_id=ChIJuY6mzP27fDURAr_EaXcfw4c'}],
+    hongbyeolgam:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/홍별감네'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=%ED%99%8D%EB%B3%84%EA%B0%90%EB%84%A4&query_place_id=ChIJH38Xx4y7fDURoiuGM1piOdw'}],
+    root:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/룻 Root'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=%EB%A3%BB%20Root&query_place_id=ChIJz33FRRCjfDURdNXubWWCeTk'}],
+    seongsu:[
+      {label:'Naver',cls:'n',url:'https://map.naver.com/p/search/성수역 4번출구'},
+      {label:'Google',cls:'g',url:'https://www.google.com/maps/search/?api=1&query=Seongsu%20Station%20Exit%204%20Seoul'}]
   };
 
   var DAYS = [
@@ -281,16 +318,20 @@
       {ico:'🍝',time:'12:30 PM',title:'Lunch — Osteria Sam Kim',place:'55 Yanghwa-ro 3-gil, Mapo-gu · near Hapjeong',type:'k',tag:{t:'k',x:'Kathy · booked'},note:'Small (~26 seats) — reserved. ~20–25 min taxi back to hotel. Closed Sundays.',maps:M.osteria},
       {ico:'🏨',time:'3:00 PM',title:'Check in — Travelodge',place:'Back at base, Myeongdong',maps:M.travelodge},
       {ico:'🛍️',title:'Local Stitch Hoehyeon',place:'Hoehyeon Station',note:'Lighting &amp; design select-shop and indie bookstore complex.',maps:M.localstitch},
-      {ico:'🍜',title:'Dinner — Woo Lae Oak (우래옥)',type:'tent',tag:{t:'tent',x:'or / TBD'},note:'冷麵 — legendary Pyongyang cold noodles in Euljiro. To confirm.',maps:M.woolaeok}
+      {ico:'🍜',time:'晚餐',title:'平壤冷麵 — 필동면옥 Pildong Myeonok',type:'tent',tag:{t:'tent',x:'二選一 · 近飯店'},note:'Pyongyang naengmyeon, ~15 min from the hotel (Chungmuro). 11:30–15:00 · 17:00–20:00; closed Sun.',maps:M.pildong},
+      {ico:'🍜',time:'晚餐',title:'平壤冷麵 — 우래옥 Woo Lae Oak',type:'tent',tag:{t:'tent',x:'二選一'},note:'The other famous Pyongyang naengmyeon, in Euljiro. Pick one on the day.',maps:M.woolaeok}
     ]},
     {date:'Fri · 10/2', sub:'週五', entries:[
       {ico:'☕',time:'10:00 AM',title:'Coffee Hanyakbang (커피한약방)',place:'16-6 Samil-daero 12-gil, Euljiro',note:'Hidden-alley café in a former herbal-medicine shop.',maps:M.hanyakbang},
-      {ico:'🚶',title:'Hannam-dong (한남동)',note:'Wander the neighbourhood — boutiques &amp; cafés.',maps:M.hannam},
+      {ico:'👜',title:'Hannam-dong 包包 & 香氛 (한남동)',note:'9 bag brands + FRA422 香氛 around Hangangjin — tap the 🛍️ 購物 tab for the full list &amp; maps. Christine Project closes 5 PM Fri.',maps:M.hannam},
       {ico:'💆',time:'4:00 PM',title:'HAYE skin clinic',place:'Dokseodang-ro 80, Yongsan-gu · near Hannam',note:'Leave hotel ~3:20–3:30 PM (15–20 min taxi). Confirm via KakaoTalk — English is limited; bring requests in Korean.',maps:M.haye},
-      {ico:'🍜',title:'Dinner — 麵首爾 (noodles)',type:'tent',tag:{t:'tent',x:'or / TBD'},note:'Kathy — to decide.'}
+      {ico:'🥩',time:'~7:30 PM',title:'烤肉 — 거북이삼겹살',type:'tent',tag:{t:'tent',x:'二選一 · 尹男老'},note:'Samgyeopsal near Junggok Stn (Line 7), east Seoul — ~25–30 min from Hannam. Open ~5 PM–10 PM; closed Sun.',maps:M.geobuki},
+      {ico:'🥩',time:'~7:30 PM',title:'烤肉 — 홍별감네 Hongbyeolgamne',type:'tent',tag:{t:'tent',x:'二選一 · 安成宰'},note:'An Sung-jae\u2019s pick, ~50 m from 거북이 on the same street. Open 5 PM–2 AM (closed Sun) — best if you run late. Pick one on the day.',maps:M.hongbyeolgam}
     ]},
     {date:'Sat · 10/3', sub:'週六', entries:[
-      {ico:'🎈',title:'Free day in Seoul',type:'soft',tag:{t:'s',x:'Open'},note:'Based in Myeongdong — plan together.'}
+      {ico:'🎈',title:'Free day in Seoul',type:'soft',tag:{t:'s',x:'Open'},note:'Based in Myeongdong — plan together.'},
+      {ico:'🛍️',time:'下午',title:'聖水洞 香氛散策 Seongsu',place:'Seongsu Stn (Line 2) Exit 4',note:'22-stop perfume &amp; beauty walk in Seongsu-dong — tap the 🛍️ 聖水 tab for the full route. ~20 min to Anguk for Root after.',maps:M.seongsu},
+      {ico:'🍽️',time:'晚餐',title:'룻 Root',place:'54-1 Yulgok-ro 1-gil, Jongno-gu · Anguk',note:'Modern Korean fine dining with traditional-liquor pairing — the trip\u2019s special dinner. Reserve ahead. Sat 11:30–15:00 · 17:00–21:30.',maps:M.root}
     ]},
     {date:'Sun · 10/4', sub:'週日 · 返程 Departure', entries:[
       {ico:'🚪',time:'11:00 AM',title:'Check out — Travelodge',maps:M.travelodge},
@@ -308,7 +349,11 @@
     {ico:'🛍️',name:'Local Stitch Hoehyeon',addr:'Hoehyeon Stn · shop 10/1',maps:M.localstitch},
     {ico:'🍜',name:'Woo Lae Oak (우래옥)',addr:'Euljiro · cold noodles · tentative',maps:M.woolaeok},
     {ico:'☕',name:'Coffee Hanyakbang (커피한약방)',addr:'Euljiro alley café · 10/2',maps:M.hanyakbang},
-    {ico:'💆',name:'HAYE skin clinic',addr:'Yongsan near Hannam · 10/2 4 PM',maps:M.haye}
+    {ico:'💆',name:'HAYE skin clinic',addr:'Yongsan near Hannam · 10/2 4 PM',maps:M.haye},
+    {ico:'🍜',name:'필동면옥 Pildong Myeonok',addr:'Jung-gu · 平壤冷麵 · 近飯店',maps:M.pildong},
+    {ico:'🥩',name:'거북이삼겹살',addr:'Gwangjin-gu 中谷 · 烤肉(尹男老)',maps:M.geobuki},
+    {ico:'🥩',name:'홍별감네 Hongbyeolgamne',addr:'Gwangjin-gu 中谷 · 烤肉(安成宰)',maps:M.hongbyeolgam},
+    {ico:'🍽️',name:'룻 Root',addr:'Jongno-gu 安國 · 精緻韓食 · 需訂位',maps:M.root}
   ];
 
   function mapsHTML(maps){
@@ -348,6 +393,59 @@
   }).join('');
   document.getElementById('placeList').innerHTML=PLACES.map(placeHTML).join('');
   document.getElementById('mapPlaceList').innerHTML=PLACES.map(placeHTML).join('');
+
+  var SEONGSU = [
+    {n:1,kr:'퍼퓨라운지',en:'Perfue Lounge'},
+    {n:2,kr:'로에베',en:'LOEWE'},
+    {n:3,kr:'아닐로',en:'Anillo'},
+    {n:4,kr:'논픽션',en:'Nonfiction'},
+    {n:5,kr:'딥티크',en:'Diptyque'},
+    {n:6,kr:'애프터블로우',en:'After Blow'},
+    {n:7,kr:'탬버린즈',en:'Tamburins'},
+    {n:8,kr:'쿠오카',en:'Kuoca'},
+    {n:9,kr:'비비앙',en:'Vivien'},
+    {n:10,kr:'킨포크',en:'Kinfolk'},
+    {n:11,kr:'아무아쥬',en:'Amouage'},
+    {n:12,kr:'페사드',en:'Pesade'},
+    {n:13,kr:'SW19',en:'SW19'},
+    {n:14,kr:'시로',en:'SHIRO'},
+    {n:15,kr:'이솝',en:'Aesop'},
+    {n:16,kr:'프라다 뷰티',en:'Prada Beauty'},
+    {n:17,kr:'르라보',en:'Le Labo'},
+    {n:18,kr:'로에',en:'LOE'},
+    {n:19,kr:'헤트라스',en:'Hetras'},
+    {n:20,kr:'포스테스',en:'POSTESS'},
+    {n:21,kr:'다니엘 트루스',en:'Daniel Truth'},
+    {n:22,kr:'본투스탠드아웃',en:'BORNTOSTANDOUT'},
+    {n:'✦',kr:'프라포투투 FRA422',en:'FRA422 Pop-up',nvq:'FRA422 성수',note:'快閃 pop-up · –2026/11/29'}
+  ];
+  document.getElementById('seongsuList').innerHTML=SEONGSU.map(function(s){
+    var nv='https://map.naver.com/p/search/'+encodeURIComponent(s.nvq||(s.kr+' 성수'));
+    var gg=s.gid?('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.en+' Seongsu')+'&query_place_id='+s.gid):('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.en+' Seongsu Seoul'));
+    return '<div class="place"><div class="ico">'+s.n+'</div><div><div class="pname">'+s.en+'</div><div class="paddr">'+s.kr+(s.note?' · '+s.note:'')+'</div>'+
+      '<div class="maps"><a href="'+nv+'" target="_blank" rel="noopener" aria-label="Open '+s.en+' in Naver"><span class="dot n"></span>Naver</a>'+
+      '<a href="'+gg+'" target="_blank" rel="noopener" aria-label="Open '+s.en+' in Google"><span class="dot g"></span>Google</a></div></div></div>';
+  }).join('');
+
+  var HANNAM = [
+    {en:'FRA422 Perfumery',kr:'프라포투투 · 香氛旗艦店 · 每日11–20:30',nvq:'FRA422 한남',gid:'ChIJ9QuScFajfDUREN1EAJYxBBQ',ico:'🕯️'},
+    {en:'Atelier de LUMEN',kr:'아뜰리에 드 루멘 · 旗艦店 · 每日11–19（含 lumen）',nvq:'아뜰리에 드 루멘 한남',gid:'ChIJmeOWpvOlfDURHagwneFdNyw'},
+    {en:'Joy Gryson',kr:'조이그라이슨 · 每日11–20 · 2F 咖啡',nvq:'조이그라이슨 한남',gid:'ChIJg0S3EQCjfDURYk2a7ea2tGw'},
+    {en:'abbr',kr:'아브르 · 3F 頂樓南山景 · Mon休 · 13–20',nvq:'아브르 한남',gid:'ChIJ0ygsFymjfDURrHyVD5vVJ0M'},
+    {en:'Christine Project',kr:'크리스틴프로젝트 · 12–19:40（週五只到17:00）',nvq:'크리스틴프로젝트 한남',gid:'ChIJvy1OlE2jfDURxqh3vodA-YU'},
+    {en:'Chorok Studio',kr:'초록스튜디오 · 한남店（Google 可能顯示文來總店,以 Naver 為準）',nvq:'초록스튜디오 한남',gid:''},
+    {en:'Mucu and Ebony',kr:'무쿠앤에보니 · 2F · Mon–Tue休 · 午休14–15',nvq:'무쿠앤에보니 한남',gid:'ChIJQau0nMmjfDURJ_xb-pRgMC8'},
+    {en:'Entre Reves',kr:'앙트레브 · Mon–Tue休 · Fri 13–19',nvq:'앙트레브 한남',gid:'ChIJtfe9lc6YfDUROTmXpOx3_KI'},
+    {en:'Minitmute',kr:'미닛뮤트 · 旗艦店 · Mon–Tue休 · 12–20',nvq:'미닛뮤트 한남',gid:'ChIJtXmc07yjfDURLkwrRvZ7_ZQ'},
+    {en:'Fillintheblank',kr:'필인더블랭크 · 3F',nvq:'필인더블랭크 한남',gid:'ChIJZ0vNq5akfDUR1_0VNIEFsG4'}
+  ];
+  document.getElementById('hannamList').innerHTML=HANNAM.map(function(s){
+    var nv='https://map.naver.com/p/search/'+encodeURIComponent(s.nvq);
+    var gg=s.gid?('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.en+' Hannam')+'&query_place_id='+s.gid):('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.en+' Hannam Seoul'));
+    return '<div class="place"><div class="ico">'+(s.ico||'👜')+'</div><div><div class="pname">'+s.en+'</div><div class="paddr">'+s.kr+'</div>'+
+      '<div class="maps"><a href="'+nv+'" target="_blank" rel="noopener" aria-label="Open '+s.en+' in Naver"><span class="dot n"></span>Naver</a>'+
+      '<a href="'+gg+'" target="_blank" rel="noopener" aria-label="Open '+s.en+' in Google"><span class="dot g"></span>Google</a></div></div></div>';
+  }).join('');
 
   function go(name){
     document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
